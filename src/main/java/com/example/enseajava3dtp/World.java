@@ -1,8 +1,10 @@
 package com.example.enseajava3dtp;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static java.lang.Math.*;
@@ -14,23 +16,47 @@ public class World {
         String line;
         String[] data;
         Aeroport a;
+        int index_IATA;
+        int index_name;
+        int index_country;
+        int index_latitude;
+        int index_longitude;
+        int index_type;
 
         list = new ArrayList<Aeroport>();
         try {
+
             BufferedReader buff = new BufferedReader(new FileReader(fileName));
-            buff.readLine();
+            line = buff.readLine();
+            //System.out.println(line);
+            data = line.split(",");
+
+            index_IATA = Arrays.asList(data).indexOf("iata_code");
+            index_name = Arrays.asList(data).indexOf("name");
+            index_country = Arrays.asList(data).indexOf("iso_country");
+            index_latitude = Arrays.asList(data).indexOf("coordinates");
+            index_longitude = index_latitude + 1;
+            index_type = Arrays.asList(data).indexOf("type");
+
+            if (index_latitude == -1)
+            {
+                index_latitude = Arrays.asList(data).indexOf("latitude_deg");
+                index_longitude = Arrays.asList(data).indexOf("longitude_deg");
+            }
+
             while ((line = buff.readLine()) != null)
             {
                 data = line.split(",");
-                if ((data[2].contains("large_airport") || data[2].contains("medium_airport")) && data.length > 13 && data[13] != null && !data[13].isEmpty())
+
+                if (data[index_type].contains("large_airport") &&
+                        (!data[index_IATA].isEmpty() && !data[index_name].isEmpty() && !data[index_country].isEmpty() && !data[index_latitude].isEmpty()  && !data[index_longitude].isEmpty()))
                 {
-                    a = new Aeroport(data[13], data[3], data[8], Double.parseDouble(data[4]), Double.parseDouble(data[5]));
+                    a = new Aeroport(data[index_IATA], data[index_name], data[index_country], Double.parseDouble(data[index_longitude]), Double.parseDouble(data[index_latitude]));
                     list.add(a);
                 }
             }
         } catch (IOException exception) {
             System.out.println(exception.toString());
-            //exception.printStackTrace();
         }
         System.out.println("end\n");
     }
@@ -69,8 +95,11 @@ public class World {
     }
 
     public static void main(String[] args) {
-        String fileName = "data/airports.csv";
+        String fileName = "data/airport-codes_no_comma.csv";    // CSV TP
+        //String fileName = "data/airports.csv                  // Old CSV
+
         World test = new World(fileName);
+        System.out.println(test.list.size());
 
         Aeroport a = test.findNearestAirport(2.316, 48.866);
         System.out.println(a.toString());
