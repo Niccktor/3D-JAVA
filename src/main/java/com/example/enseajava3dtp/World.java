@@ -50,7 +50,7 @@ public class World {
         return (list.stream().filter(a -> a.getIATA().contains(IATA)).findFirst().orElse(null));
     }
 
-    public Aeroport findNearestAirport(double latitude, double longitude)
+    public Aeroport findNearestAirport(double longitude, double latitude)
     {
         double distance_nearest = 1000000.0;
         double distance;
@@ -72,10 +72,12 @@ public class World {
         String fileName = "data/airports.csv";
         World test = new World(fileName);
 
-        Aeroport a = test.findNearestAirport(48.866,2.316);
+        Aeroport a = test.findNearestAirport(2.316, 48.866);
         System.out.println(a.toString());
         Aeroport b = test.findByCode("YUL");
         System.out.println(b.toString());
+        Aeroport c = test.findNearestAirport(-73, 45);
+        System.out.println(c.toString());
         return;
     }
 }

@@ -43,17 +43,19 @@ public class Aeroport {
     //https://fr.wikipedia.org/wiki/Formule_de_haversine
     public Double distance(double latitude, double longitude)
     {
-        double radius = 6371;
-        double lat1Rad = Math.toRadians(latitude);
-        double lat2Rad = Math.toRadians(this.getLatitude());
-        double deltaLat = Math.toRadians(this.getLatitude() - latitude);
-        double deltaLon = Math.toRadians(this.getLongitude() - longitude);
-        double b = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-                Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-                        Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
-        double c = 2 * Math.atan2(sqrt(b), sqrt(1 - b));
+        final int R = 6371; // Rayon moyen de la Terre en kilomètres
 
-        return  (2 * radius * asin(sqrt(b)));
+        // Conversion des degrés en radians
+        double latDistance = Math.toRadians(latitude - this.latitude);
+        double lonDistance = Math.toRadians(longitude - this.longitude);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(this.latitude)) * Math.cos(Math.toRadians(latitude))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Calcul de la distance
+        //System.out.println(c*R);
+        return (R * c);
     }
 
     public double distance (Aeroport a)
